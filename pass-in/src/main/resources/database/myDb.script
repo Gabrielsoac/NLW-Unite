@@ -29,7 +29,7 @@ SET FILES NIO TRUE
 SET FILES NIO SIZE 256
 SET FILES LOG TRUE
 SET FILES LOG SIZE 50
-SET FILES CHECK 733
+SET FILES CHECK 6773
 SET DATABASE COLLATION "SQL_TEXT" PAD SPACE
 CREATE USER SA PASSWORD DIGEST 'd41d8cd98f00b204e9800998ecf8427e'
 ALTER USER SA SET LOCAL TRUE
@@ -58,3 +58,8 @@ INSERT INTO "flyway_schema_history" VALUES(1,'1','create-table-events','SQL','V1
 INSERT INTO "flyway_schema_history" VALUES(2,'2','create-table-attendees','SQL','V2__create-table-attendees.sql',2147123097,'SA','2024-04-02 22:57:52.844769',10,'1')
 INSERT INTO "flyway_schema_history" VALUES(3,'3','create-table-checkins','SQL','V3__create-table-checkins.sql',425672866,'SA','2024-04-02 22:57:52.859265',1,'1')
 INSERT INTO "flyway_schema_history" VALUES(4,'4','create-indexes','SQL','V4__create-indexes.sql',1739851587,'SA','2024-04-02 22:57:52.870792',3,'1')
+INSERT INTO EVENTS VALUES('0c1164ac-2e87-4c19-a819-11a90abb45e9','TV','Aprendendo Java','aprendendo-java',5)
+INSERT INTO EVENTS VALUES('11cf2c20-5949-4e2e-ad49-2bbdf5f2a383','Rocketseat NLW','Learning Java free course','learning-java-free-course',500)
+INSERT INTO EVENTS VALUES('251d37e5-cda3-4496-b23e-b5218ccbb0bb','new Java','Learning Java','learning-java',560)
+INSERT INTO EVENTS VALUES('6c6b202a-7cd5-49f1-8a2d-6c4a3b365be0','Rocketseat Java','Leaning Java','leaning-java',500)
+INSERT INTO EVENTS VALUES('fec8d886-3349-4409-8ca6-81baa541cf33','Rocketseat NLW2','Learning Java free course2','learning-java-free-course2',500)

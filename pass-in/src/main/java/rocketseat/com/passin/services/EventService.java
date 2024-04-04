@@ -7,12 +7,12 @@ import rocketseat.com.passin.DTOs.event.EventRequestDTO;
 import rocketseat.com.passin.DTOs.event.EventResponseDTO;
 import rocketseat.com.passin.domain.attendee.Attendee;
 import rocketseat.com.passin.domain.event.Event;
+import rocketseat.com.passin.domain.event.exceptions.EventNotFoundException;
 import rocketseat.com.passin.repositories.AttendeesRepository;
 import rocketseat.com.passin.repositories.EventRepository;
 
 import java.text.Normalizer;
 import java.util.List;
-import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
@@ -21,23 +21,21 @@ public class EventService {
     private final EventRepository eventRepository;
     private final AttendeesRepository attendeesRepository;
 
-    public EventResponseDTO getEventDetail(String eventId){
-        Event event = eventRepository.findById(eventId).orElseThrow(() ->
-                new RuntimeException("Event not found with ID" + eventId ));
+    public EventResponseDTO getEventDetail(String id){
+        Event event = this.eventRepository.findById(id).orElseThrow(() ->
+                new EventNotFoundException("Event not found with ID" + id ));
 
-        List<Attendee> attendeeList = attendeesRepository.findByEventId(eventId);
+        List<Attendee> attendeeList = this.attendeesRepository.findByEventId(id);
 
-        Integer numberOfAttendees = attendeeList.size();
-
-        return new EventResponseDTO(event, numberOfAttendees);
+        return new EventResponseDTO(event, attendeeList.size());
     }
 
     public EventIdDTO createEvent(EventRequestDTO eventDTO){
         Event newEvent = new Event();
         newEvent.setTitle(eventDTO.title());
-        newEvent.setDetail(eventDTO.details());
+        newEvent.setDetails(eventDTO.details());
         newEvent.setMaximumAttendees(eventDTO.maximumAttendees());
-        newEvent.setSlug(createSlug(eventDTO.title()));
+        newEvent.setSlug(createSlug(eventDTO.details()));
 
         this.eventRepository.save(newEvent);
 

@@ -1,6 +1,5 @@
 package rocketseat.com.passin.DTOs.event;
 
-import org.antlr.v4.runtime.misc.NotNull;
 
 public record EventDetailDTO(
         String id,
