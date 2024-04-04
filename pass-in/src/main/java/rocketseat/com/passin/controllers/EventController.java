@@ -1,12 +1,12 @@
 package rocketseat.com.passin.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+import rocketseat.com.passin.DTOs.event.EventIdDTO;
+import rocketseat.com.passin.DTOs.event.EventRequestDTO;
+import rocketseat.com.passin.DTOs.event.EventResponseDTO;
 import rocketseat.com.passin.services.EventService;
 
 @RestController
@@ -16,8 +16,15 @@ public class EventController {
 
     private final EventService eventService;
     @GetMapping("/{id}")
-    public ResponseEntity<String> getEvent(@PathVariable String id) {
-        eventService.getEventDetail(id);
-        return ResponseEntity.ok();
+    public ResponseEntity<EventResponseDTO> getEvent(@PathVariable String id) {
+        EventResponseDTO event = eventService.getEventDetail(id);
+        return ResponseEntity.ok(event);
+    }
+
+    @PostMapping
+    public ResponseEntity<EventIdDTO> createEvent(@RequestBody EventRequestDTO body, UriComponentsBuilder uriComponentsBuilder){
+        EventIdDTO newEvent = eventService.createEvent(body);
+        var uri = uriComponentsBuilder.path("/events/{id}").buildAndExpand(newEvent.eventId()).toUri();
+        return ResponseEntity.created(uri).body(newEvent);
     }
 }
