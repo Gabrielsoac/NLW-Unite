@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import rocketseat.com.passin.DTOs.attendees.AttendeeDetails;
 import rocketseat.com.passin.DTOs.attendees.AttendeesListResponseDTO;
 import rocketseat.com.passin.domain.attendee.Attendee;
+import rocketseat.com.passin.domain.attendee.exceptions.AttendeeAlreadyExistException;
 import rocketseat.com.passin.domain.checkin.Checkin;
 import rocketseat.com.passin.repositories.AttendeeRepository;
 import rocketseat.com.passin.repositories.CheckInRepository;
@@ -33,5 +34,15 @@ public class AttendeeService {
             return new AttendeeDetails(attendee.getId(), attendee.getName(), attendee.getEmail(), attendee.getCreatedAt(), checkedInAt);
         }).toList();
     return new AttendeesListResponseDTO(attendeeDetailsList);
+    }
+
+    public Attendee registerAttendee(Attendee newAttendee) {
+        this.attendeeRepository.save(newAttendee);
+        return newAttendee;
+    }
+
+    public void verifyAttendeeSubscripton(String email, String eventId){
+        Optional<Attendee> isAttendeeRegistered = attendeeRepository.findByEventIdAndEmail(eventId, email);
+        if (isAttendeeRegistered.isPresent()) throw new AttendeeAlreadyExistException("Attendee is already registered");
     }
 }
