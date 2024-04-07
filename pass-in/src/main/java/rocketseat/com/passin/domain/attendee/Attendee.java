@@ -10,7 +10,7 @@ import rocketseat.com.passin.domain.event.Event;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "attendes")
+@Table(name = "attendees")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
