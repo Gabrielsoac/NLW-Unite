@@ -12,7 +12,6 @@ import rocketseat.com.passin.domain.attendee.Attendee;
 import rocketseat.com.passin.domain.attendee.exceptions.AttendeeAlreadyExistException;
 import rocketseat.com.passin.domain.checkin.Checkin;
 import rocketseat.com.passin.repositories.AttendeeRepository;
-import rocketseat.com.passin.repositories.CheckInRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,7 +22,7 @@ import java.util.Optional;
 public class AttendeeService {
 
     private final AttendeeRepository attendeeRepository;
-    private final CheckInRepository checkInRepository;
+    private final CheckInService checkInService;
 
     public List<Attendee> getAllAttendeesFromEvent(String eventId){
         return this.attendeeRepository.findByEventId(eventId);
@@ -33,7 +32,7 @@ public class AttendeeService {
         List<Attendee> attendeeList = this.getAllAttendeesFromEvent(eventId);
 
         List<AttendeeDetails> attendeeDetailsList = attendeeList.stream().map(attendee -> {
-            Optional<Checkin> checkIn = this.checkInRepository.findByAttendeeId(attendee.getId());
+            Optional<Checkin> checkIn = this.checkInService.getCheckIn(attendee.getId());
             LocalDateTime checkedInAt = checkIn.map(Checkin::getCreatedAt).orElse(null);
             return new AttendeeDetails(attendee.getId(), attendee.getName(), attendee.getEmail(), attendee.getCreatedAt(), checkedInAt);
         }).toList();
@@ -52,10 +51,19 @@ public class AttendeeService {
 
     public AttendeeBagdeResponseDTO getAttendeBagde(String attendeeId, UriComponentsBuilder uriComponentsBuilder){
 
-        Attendee attendee = this.attendeeRepository.findById(attendeeId).orElseThrow(() -> new AttendeeNotFoundException("Attendee not found with ID: " + attendeeId));
+        Attendee attendee = this.getAttendee(attendeeId);
 
         var uri = uriComponentsBuilder.path("/attendees/{attendeeId}/check-in").buildAndExpand(attendeeId).toUri();
 
         return new AttendeeBagdeResponseDTO(new AttendeeBadgeDTO(attendee.getName(), attendee.getName(),uri.toString(), attendee.getEvent().getId()));
+    }
+
+    public void checkInAttendee(String attendeeId){
+        Attendee attendee = this.getAttendee(attendeeId);
+        this.checkInService.registerCheckIn(attendee);
+    }
+
+    private Attendee getAttendee(String attendeeId){
+        return this.attendeeRepository.findById(attendeeId).orElseThrow(() -> new AttendeeNotFoundException("Attendee not found with ID: " + attendeeId));
     }
 }
