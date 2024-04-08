@@ -2,7 +2,11 @@ package rocketseat.com.passin.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
+import rocketseat.com.passin.DTOs.attendees.AttendeeBagdeResponseDTO;
 import rocketseat.com.passin.DTOs.attendees.AttendeeDetails;
+import rocketseat.com.passin.DTOs.attendees.AttendeeBadgeDTO;
+import rocketseat.com.passin.domain.event.exceptions.AttendeeNotFoundException;
 import rocketseat.com.passin.DTOs.attendees.AttendeesListResponseDTO;
 import rocketseat.com.passin.domain.attendee.Attendee;
 import rocketseat.com.passin.domain.attendee.exceptions.AttendeeAlreadyExistException;
@@ -44,5 +48,14 @@ public class AttendeeService {
     public void verifyAttendeeSubscripton(String email, String eventId){
         Optional<Attendee> isAttendeeRegistered = attendeeRepository.findByEventIdAndEmail(eventId, email);
         if (isAttendeeRegistered.isPresent()) throw new AttendeeAlreadyExistException("Attendee is already registered");
+    }
+
+    public AttendeeBagdeResponseDTO getAttendeBagde(String attendeeId, UriComponentsBuilder uriComponentsBuilder){
+
+        Attendee attendee = this.attendeeRepository.findById(attendeeId).orElseThrow(() -> new AttendeeNotFoundException("Attendee not found with ID: " + attendeeId));
+
+        var uri = uriComponentsBuilder.path("/attendees/{attendeeId}/check-in").buildAndExpand(attendeeId).toUri();
+
+        return new AttendeeBagdeResponseDTO(new AttendeeBadgeDTO(attendee.getName(), attendee.getName(),uri.toString(), attendee.getEvent().getId()));
     }
 }
